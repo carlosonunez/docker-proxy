@@ -39,9 +39,7 @@ First, create an `.env` file containing the following:
 		--reconnect-timeout 86400
 ```
 
-An update to date example is provided at `.env.example`.
-
-_Don't use quotes around the values!_
+An update to date example is provided at `.env.example`. _Don't use quotes around the values!_
 
 Optionally set a multi factor authentication code:
 
@@ -51,10 +49,16 @@ See the [openconnect documentation](https://www.infradead.org/openconnect/manual
 
 Next, start the VPN: `./start_vpn.sh`. You will not see any output if successful.
 
+**NOTE**: If your `.env` file is not in your current working directory, use this instead:
+`ENV_FILE=/path/to/env ./start_vpn.sh`
+
 Finally, configure your browser to use the proxy by setting its HTTP proxy to `localhost:8118`
 and SOCKS proxy to `localhost:8889`.
 
 To stop the VPN, simply run: `./stop_vpn.sh`.
+
+**NOTE**: If your `.env` file is not in your current working directory, use this instead:
+`ENV_FILE=/path/to/env ./stop_vpn.sh`
 
 ## Troubleshooting
 
@@ -62,3 +66,6 @@ To stop the VPN, simply run: `./stop_vpn.sh`.
 
 Most VPN slowness can be resolved by restarting the VPN container. Run this to do that:
 `./restart_vpn.sh`.
+
+**NOTE**: If your `.env` file is not in your current working directory, use this instead:
+`ENV_FILE=/path/to/env ./restart_vpn.sh`

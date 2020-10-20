@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
+ENV_FILE="${ENV_FILE:-$(dirname $0)/.env}"
 VPN_CONTAINER_NAME="${VPN_CONTAINER_NAME:-vpn}"
 VPN_DOCKER_IMAGE_NAME="${VPN_DOCKER_IMAGE_NAME:-local/docker_vpn}"
 REBUILD_IMAGE="${REBUILD_IMAGE:-false}"
 
 env_file_present() {
-  test -f "$(dirname $0)/.env"
+  test -f "$ENV_FILE"
 }
 
 build_docker_image() {
@@ -19,7 +20,7 @@ build_docker_image() {
 start_vpn() {
   if ! env_file_present
   then
-    >&2 echo "ERROR: Please create a .env file (see README.md for instructions)."
+    >&2 echo "ERROR: Env file missing at $ENV_FILE (see README.md to learn how to create one)."
     exit 1
   fi
 
@@ -41,5 +42,5 @@ stop_vpn() {
     exit 1
   fi
 
-  docker rm -f "$VPN_CONTAINER_NAME" -q
+  docker rm -f "$VPN_CONTAINER_NAME" 
 }
