@@ -55,3 +55,10 @@ Finally, configure your browser to use the proxy by setting its HTTP proxy to `l
 and SOCKS proxy to `localhost:8889`.
 
 To stop the VPN, simply run: `./stop_vpn.sh`.
+
+## Troubleshooting
+
+### My connection is really slow. How can I fix it?
+
+Most VPN slowness can be resolved by restarting the VPN container. Run this to do that:
+`./restart_vpn.sh`.
