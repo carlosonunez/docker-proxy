@@ -28,7 +28,7 @@ start_vpn() {
     docker run --detach \
       --name "$VPN_CONTAINER_NAME" \
       --tty \
-      --env-file "$(dirname $0)/.env" \
+      --env-file "$ENV_FILE" \
       --privileged \
       --publish 8118:8118 \
       --publish 8889:8889 \
