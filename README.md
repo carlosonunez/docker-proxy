@@ -28,9 +28,7 @@ Use this if you want to use VPN but don't want it taking over all traffic on you
 
 ## How do I use?
 
-First, build this image: `docker build -t $IMAGE_NAME .`
-
-Next, create an `.env` file containing the following:
+First, create an `.env` file containing the following:
 
 ```
 	OPENCONNECT_URL=<Gateway URL>
@@ -41,6 +39,8 @@ Next, create an `.env` file containing the following:
 		--reconnect-timeout 86400
 ```
 
+An update to date example is provided at `.env.example`.
+
 _Don't use quotes around the values!_
 
 Optionally set a multi factor authentication code:
@@ -49,10 +49,9 @@ Optionally set a multi factor authentication code:
 
 See the [openconnect documentation](https://www.infradead.org/openconnect/manual.html) for available options. 
 
-Next, create your container! `docker run --privileged --env-file .env -p 8888:8888 -p 8889:8889 $IMAGE_NAME`
+Next, start the VPN: `./start_vpn.sh`. You will not see any output if successful.
 
-Finally, configure your browser to use the proxy by setting its HTTP proxy to `localhost:8888`
+Finally, configure your browser to use the proxy by setting its HTTP proxy to `localhost:8118`
 and SOCKS proxy to `localhost:8889`.
 
-
-
+To stop the VPN, simply run: `./stop_vpn.sh`.
