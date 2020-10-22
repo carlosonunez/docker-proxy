@@ -60,6 +60,31 @@ To stop the VPN, simply run: `./stop_vpn.sh`.
 **NOTE**: If your `.env` file is not in your current working directory, use this instead:
 `ENV_FILE=/path/to/env ./stop_vpn.sh`
 
+## Cool Use Cases
+
+### Dedicated browser for separating normal web browsing from "protected" web browsing
+
+[Create a separate Firefox profile](https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Multiple_profiles).
+Configure its HTTP proxy to `localhost:8118`, its SOCKS5 proxy to `localhost:8443` and enable
+"Proxy DNS request through SOCKS". Boom! You now have a dedicated web browser that goes through
+the proxy.
+
+### Execute shell requests through the proxy
+
+If you need to access a resource through the proxy, simply export these environment variables:
+
+```sh
+export HTTP_PROXY=localhost:8118
+export HTTPS_PROXY=localhost:8118
+export SOCKS_PROXY=localhost:8889
+```
+
+or you can put them before your command to use them for one-off processes:
+
+```sh
+HTTP_PROXY=localhost:8118 HTTPS_PROXY=localhost:8118 SOCKS_PROXY=localhost:8889 curl [options]
+```
+
 ## Troubleshooting
 
 ### My connection is really slow. How can I fix it?
