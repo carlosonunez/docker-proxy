@@ -11,9 +11,7 @@ env_file_present() {
 build_docker_image() {
   if ! docker images | grep -q "$VPN_DOCKER_IMAGE_NAME" || test "$REBUILD_IMAGE" != "false"
   then
-    docker build -t "$VPN_DOCKER_IMAGE_NAME" \
-      -f $(dirname $0)/include/dockerfiles/openconnect-vpn/Dockerfile \
-      $(dirname $0)/include/dockerfiles/openconnect-vpn
+    docker build -t "$VPN_DOCKER_IMAGE_NAME" -f $(dirname $0)/Dockerfile $(dirname $0)
   fi
 }
 
