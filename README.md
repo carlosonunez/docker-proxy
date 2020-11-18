@@ -94,3 +94,9 @@ Most VPN slowness can be resolved by restarting the VPN container. Run this to d
 
 **NOTE**: If your `.env` file is not in your current working directory, use this instead:
 `ENV_FILE=/path/to/env ./restart_vpn.sh`
+
+### I need to use a csd-wrapper script to connect to my VPN. How can I do that?
+
+This Docker image downloads the Openconnect "trojan" scripts into the `/trojans` directory.
+If you need to use one (like `hipreport.sh` for GlobalProtect VPNs), add
+`--csd-wrapper=/trojans/hipreport.sh` to the `OPENCONNECT_OPTIONS` environment variable.
