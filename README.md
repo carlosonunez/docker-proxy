@@ -60,6 +60,21 @@ To stop the VPN, simply run: `./stop_vpn.sh`.
 **NOTE**: If your `.env` file is not in your current working directory, use this instead:
 `ENV_FILE=/path/to/env ./stop_vpn.sh`
 
+## Does your VPN require a client certificate?
+
+If so, add this to your `ENV_FILE`:
+
+```sh
+OPENCONNECT_CERT_PATH=/path/to/cert
+OPENCONNECT_CERT_KEY=/path/to/key
+```
+
+## Does your VPN have multiple gateways?
+
+If so, choose the VPN server corresponding to the gateway that you would like to connect to.
+For more info on why you need to do this,
+[visit this GitHub issue](https://github.com/dlenski/openconnect/issues/128).
+
 ## Cool Use Cases
 
 ### Dedicated browser for separating normal web browsing from "protected" web browsing

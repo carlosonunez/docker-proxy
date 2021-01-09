@@ -21,8 +21,12 @@ start_vpn() {
     >&2 echo "ERROR: Env file missing at $ENV_FILE (see README.md to learn how to create one)."
     exit 1
   fi
+  cert_path=$(cat $ENV_FILE | grep OPENCONNECT_CERT_PATH | cut -f2 -d =)
+  key_path=$(cat $ENV_FILE | grep OPENCONNECT_KEY_PATH | cut -f2 -d =)
 
-  build_docker_image && 
+  build_docker_image || return 1
+  if test -z "$cert_path" || test -z "$key_path"
+  then
     docker run --detach \
       --name "$VPN_CONTAINER_NAME" \
       --tty \
@@ -31,6 +35,18 @@ start_vpn() {
       --publish 8118:8118 \
       --publish 8889:8889 \
       $VPN_DOCKER_IMAGE_NAME >/dev/null
+  else
+    docker run --detach \
+      --name "$VPN_CONTAINER_NAME" \
+      --tty \
+      --env-file "$ENV_FILE" \
+      -v $cert_path:/certificate \
+      -v $key_path:/key \
+      --privileged \
+      --publish 8118:8118 \
+      --publish 8889:8889 \
+      $VPN_DOCKER_IMAGE_NAME >/dev/null
+  fi
 }
 
 stop_vpn() {
