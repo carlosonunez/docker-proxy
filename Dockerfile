@@ -6,12 +6,13 @@ ARG MICROSOCKS_GIT_URL=https://github.com/rofl0r/microsocks
 ARG OPENSHIFT_CLIENT_URL=https://github.com/openshift/okd/releases/download/4.5.0-0.okd-2020-09-18-202631/openshift-client-linux-4.5.0-0.okd-2020-09-18-202631.tar.gz
 ARG OPENCONNECT_TROJANS_URL=https://gitlab.com/openconnect/openconnect/-/archive/master/openconnect-master.zip?path=trojans
 
+RUN apt -y update
+
 # Configure tzdata (it's a dependency and a **** to configure)
 RUN ln -snf /usr/share/zoneinfo/UTC /etc/localtime && printf UTC > /etc/timezone
 
 
 # Install OpenConnect
-RUN apt -y update
 RUN apt -y install software-properties-common
 RUN apt -y install openconnect
 

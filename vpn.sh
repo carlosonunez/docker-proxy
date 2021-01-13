@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
-ENV_FILE="${ENV_FILE:-$(dirname $0)/.env}"
-VPN_CONTAINER_NAME="${VPN_CONTAINER_NAME:-vpn}"
-VPN_DOCKER_IMAGE_NAME="${VPN_DOCKER_IMAGE_NAME:-local/docker_vpn}"
-REBUILD_IMAGE="${REBUILD_IMAGE:-false}"
-
 env_file_present() {
   test -f "$ENV_FILE"
 }
+
+ENV_FILE="${ENV_FILE:-$(dirname $0)/.env}"
+if env_file_present
+then
+  export $(cat "$ENV_FILE" | xargs)
+fi
+VPN_CONTAINER_NAME="${VPN_CONTAINER_NAME:-vpn}"
+VPN_DOCKER_IMAGE_NAME="${VPN_DOCKER_IMAGE_NAME:-local/docker_vpn}"
+REBUILD_IMAGE="${REBUILD_IMAGE:-false}"
+HTTP_PROXY_PORT="${HTTP_PROXY_PORT:-8118}"
+SOCKS_PROXY_PORT="${SOCKS_PROXY_PORT:-8889}"
 
 build_docker_image() {
   if ! docker images | grep -q "$VPN_DOCKER_IMAGE_NAME" || test "$REBUILD_IMAGE" != "false"
@@ -32,19 +38,19 @@ start_vpn() {
       --tty \
       --env-file "$ENV_FILE" \
       --privileged \
-      --publish 8118:8118 \
-      --publish 8889:8889 \
+      --publish $HTTP_PROXY_PORT:8118 \
+      --publish $SOCKS_PROXY_PORT:8889 \
       $VPN_DOCKER_IMAGE_NAME >/dev/null
   else
     docker run --detach \
       --name "$VPN_CONTAINER_NAME" \
       --tty \
-      --env-file "$ENV_FILE" \
+      --env-file "$ENV_FILE" 
       -v $cert_path:/certificate \
       -v $key_path:/key \
       --privileged \
-      --publish 8118:8118 \
-      --publish 8889:8889 \
+      --publish $HTTP_PROXY_PORT:8118 \
+      --publish $SOCKS_PROXY_PORT:8889 \
       $VPN_DOCKER_IMAGE_NAME >/dev/null
   fi
 }
