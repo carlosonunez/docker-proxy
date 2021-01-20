@@ -7,7 +7,8 @@ forward-socks5          /             127.0.0.1:8889    .
 PRIVOXY_CONFIG
 privoxy /etc/privoxy/config &
 
-run () {
+run_openconnect () {
+  set -x
   # Start openconnect
   options="$OPENCONNECT_OPTIONS"
   if test -f /certificate && test -f /key
@@ -24,10 +25,23 @@ run () {
   # Standard authentication
     echo $OPENCONNECT_PASSWORD | openconnect -u $OPENCONNECT_USER $options --passwd-on-stdin $OPENCONNECT_URL
   fi
+  set +x
 }
 
-until (run); do
-  echo "openconnect exited. Restarting process in 60 seconds…" >&2
-  sleep 60
-done
+run_openvpn() {
+  openvpn --config /etc/openvpn/openvpn.config
+}
+
+if test "$(cat /etc/openvpn/openvpn.config)" != "no openvpn config present"
+then
+  until (run_openvpn); do
+    echo "openvpn exited; restarting in 60 seconds..." >&2
+    sleep 60
+  done
+else
+  until (run_openconnect); do
+    echo "openconnect exited. Restarting process in 60 seconds…" >&2
+    sleep 60
+  done
+fi
 

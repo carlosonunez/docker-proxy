@@ -6,7 +6,7 @@ by your IT organization before using.
 
 This image creates a Docker container that:
 
-* Connects to your personal or corporate VPN through openconnect, and
+* Connects to your personal or corporate VPN through your or your company's VPN server, and
 * Creates a HTTP/HTTPS/SOCK proxy that browsers on your host can use to forward traffic through.
 
 Inspired by [wazum/openconnect-proxy](https://github.com/wazum/openconnect-proxy) and
@@ -18,17 +18,27 @@ Use this if you want to use VPN but don't want it taking over all traffic on you
 
 ## Compatible with
 
+### via OpenConnect
+
 - Cisco Anyconnect (if configured),
 - GlobalProtect
 - Juniper VPNs
 
+### via OpenVPN
+
+- Private Internet Access
+- NordVPN
+- Other major VPN providers
+
 ## Not Compatible With
 
-- Citrix Netscaler (not supported by openconnect)
+- Citrix Netscaler (no open-source tool available for it)
 
 ## How do I use?
 
 First, create an `.env` file containing the following:
+
+### openconnect
 
 ```
 	OPENCONNECT_URL=<Gateway URL>
@@ -39,13 +49,21 @@ First, create an `.env` file containing the following:
 		--reconnect-timeout 86400
 ```
 
-An update to date example is provided at `.env.example`. _Don't use quotes around the values!_
-
 Optionally set a multi factor authentication code:
 
 	OPENCONNECT_MFA_CODE=<Multi factor authentication code>
 
 See the [openconnect documentation](https://www.infradead.org/openconnect/manual.html) for available options. 
+
+### openvpn
+
+```
+OPENVPN_CONFIG_FILE=/path/to/config/file
+OPENVPN_USERNAME=admin
+OPENVPN_PASSWORD=supersecret
+```
+
+An update to date example is provided at `.env.example`. _Don't use quotes around the values!_
 
 Next, start the VPN: `./start_vpn.sh`. You will not see any output if successful.
 
@@ -62,12 +80,15 @@ To stop the VPN, simply run: `./stop_vpn.sh`.
 
 ## Does your VPN require a client certificate?
 
-If so, add this to your `ENV_FILE`:
+If so and you are using openconnect, add this to your `ENV_FILE`:
 
 ```sh
 OPENCONNECT_CERT_PATH=/path/to/cert
 OPENCONNECT_CERT_KEY=/path/to/key
 ```
+
+If you are using OpenVPN, embed the certificate in `<ca>`, `<cert>`, and `<key>`
+statements as needed.
 
 ## Does your VPN have multiple gateways?
 
