@@ -63,6 +63,22 @@ OPENVPN_USERNAME=admin
 OPENVPN_PASSWORD=supersecret
 ```
 
+You can specify additional `--up` or `--down` scripts by setting
+`OPENVPN_UP_SCRIPTS` and/or `OPENVPN_DOWN_SCRIPTS` to a comma-separated
+list of scripts on your machine and then adding the following to your config
+defined by `OPENVPN_CONFIG_FILE`:
+
+```
+up /additional_up_scripts
+down /additional_down_scripts
+```
+
+If your OpenVPN server advertises a nameserver, add this to your config:
+
+```
+up /etc/openvpn/update-resolv-conf.sh
+```
+
 An update to date example is provided at `.env.example`. _Don't use quotes around the values!_
 
 Next, start the VPN: `./start_vpn.sh`. You will not see any output if successful.

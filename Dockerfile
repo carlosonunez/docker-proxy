@@ -27,7 +27,11 @@ RUN cd /tools/microsocks && make && make install
 RUN apt -y install privoxy
 
 FROM proxies AS openvpn
-RUN apt -y install openvpn
+RUN echo "resolvconf resolvconf/linkify-resolvconf boolean false" | debconf-set-selections
+RUN apt -y install openvpn openresolv
+RUN git clone https://github.com/alfredopalhares/openvpn-update-resolv-conf /tmp/resolv-conf && \
+    mv /tmp/resolv-conf/update-resolv-conf.sh /etc/openvpn/update-resolv-conf.sh && \
+    chmod 755 /etc/openvpn/update-resolv-conf.sh
 
 FROM openvpn AS app
 COPY entrypoint.sh /entrypoint.sh

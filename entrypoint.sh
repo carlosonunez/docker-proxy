@@ -29,7 +29,7 @@ run_openconnect () {
 }
 
 run_openvpn() {
-  openvpn --config /etc/openvpn/openvpn.config
+  openvpn --script-security 2 --config /etc/openvpn/openvpn.config
 }
 
 if test "$(cat /etc/openvpn/openvpn.config)" != "no openvpn config present"
