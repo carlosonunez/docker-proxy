@@ -123,6 +123,28 @@ the proxy.
 
 ### Execute shell requests through the proxy
 
+#### Through proxychains (recommended)
+
+[`proxychains`](https://github.com/haad/proxychains) is a tool that tunnels all network traffic
+from any `libc`-compiled application through SOCKS or HTTP proxies. Unlike the `HTTP_PROXY`
+variables, it also supports resolving DNS records through the proxy.
+
+Installing it is easy:
+
+```sh
+git clone https://github.com/haad/proxychains &&
+  cd proxychains &&
+  ./configure && make && make install
+```
+
+Using it is easy too:
+
+```sh
+PROXYCHAINS_SOCKS5=8889 proxychains4 curl foo.com
+```
+
+#### Through simple environment variables
+
 If you need to access a resource through the proxy, simply export these environment variables:
 
 ```sh
