@@ -174,3 +174,13 @@ Most VPN slowness can be resolved by restarting the VPN container. Run this to d
 This Docker image downloads the Openconnect "trojan" scripts into the `/trojans` directory.
 If you need to use one (like `hipreport.sh` for GlobalProtect VPNs), add
 `--csd-wrapper=/trojans/hipreport.sh` to the `OPENCONNECT_OPTIONS` environment variable.
+
+### I'm running Docker Proxy with a M1 MacBook, but want to use the x86 version. How?
+
+Run `docker-proxy` like this:
+
+```sh
+PLATFORM=amd64 ./start_vpn.sh
+```
+
+Remove any `docker_vpn` images before doing this.

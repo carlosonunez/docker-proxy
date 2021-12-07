@@ -86,11 +86,43 @@ VPN_DOCKER_IMAGE_NAME="${VPN_DOCKER_IMAGE_NAME:-local/docker_vpn}"
 REBUILD_IMAGE="${REBUILD_IMAGE:-false}"
 HTTP_PROXY_PORT="${HTTP_PROXY_PORT:-8118}"
 SOCKS_PROXY_PORT="${SOCKS_PROXY_PORT:-8889}"
+PLATFORM="${PLATFORM:-amd64}"
+
+resolve_docker_platform_or_fail() {
+  _resolve_using_cpu_arch() {
+    case "$(uname -m)" in
+      x86_64)
+        echo "linux/amd64"
+        return 0
+        ;;
+      arm|arm64)
+        echo "linux/arm64"
+        return 0
+        ;;
+      *)
+        echo "ERROR: Unsupported platform: $(uname -m)"
+        exit 1
+        ;;
+    esac
+  }
+
+  _resolve_using_preference() {
+    grep -iq 'amd64' <<< "$PLATFORM" && { echo "linux/amd64" && return 0; }
+    grep -iq 'arm' <<< "$PLATFORM" && { echo "linux/arm64" && return 0; }
+    >&2 echo "ERROR: Unsupported platform: $PLATFORM" && exit 1
+  }
+
+  test -z "$PLATFORM" && _resolve_using_cpu_arch || _resolve_using_preference
+
+}
 
 build_docker_image() {
+  platform="$(resolve_docker_platform_or_fail)"
   if ! docker images | grep -q "$VPN_DOCKER_IMAGE_NAME" || test "$REBUILD_IMAGE" != "false"
   then
-    docker build -t "$VPN_DOCKER_IMAGE_NAME" -f $(dirname $0)/Dockerfile $(dirname $0)
+    docker build --platform "$platform" \
+      -t "$VPN_DOCKER_IMAGE_NAME" \
+      -f $(dirname $0)/Dockerfile $(dirname $0)
   fi
 }
 
