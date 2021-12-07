@@ -23,20 +23,26 @@ env_file_hash() {
   echo "$ENV_FILE" | md5sum | cut -f1 -d '-' | head -c 8
 }
 
+openvpn_config_path() {
+  path="$HOME/.config/docker-proxy"
+  test -d "$path" || mkdir -p "$path"
+  echo "$path"
+}
+
 openvpn_config_file() {
-  echo "/tmp/openvpn-config.$(env_file_hash)"
+  echo "$(openvpn_config_path)/openvpn-config.$(env_file_hash)"
 }
 
 openvpn_login_file() {
-  echo "/tmp/openvpn-login.$(env_file_hash)"
+  echo "$(openvpn_config_path)/openvpn-login.$(env_file_hash)"
 }
 
 openvpn_up_file() {
-  echo "/tmp/openvpn-up.$(env_file_hash)"
+  echo "$(openvpn_config_path)/openvpn-up.$(env_file_hash)"
 }
 
 openvpn_down_file() {
-  echo "/tmp/openvpn-down.$(env_file_hash)"
+  echo "$(openvpn_config_path)/openvpn-down.$(env_file_hash)"
 }
 
 create_openvpn_config_file_if_env_var_present() {
