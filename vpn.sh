@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+CREATE_DOCKER_VOLUME="${CREATE_DOCKER_VOLUME:-true}"
+DELETE_DOCKER_VOLUME="${DELETE_DOCKER_VOLUME:-false}"
 _create_scripts() {
   script_file="$1"
   vpn_scripts_csv="$2"
@@ -76,6 +78,18 @@ delete_openvpn_scripts() {
   rm -f "$(openvpn_down_file)"
 }
 
+build_docker_volume() {
+  if grep -Eiq '^true$' <<< "$CREATE_DOCKER_VOLUME"
+  then
+    vol_name="$(printf "%s-volume" "$1")"
+    docker volume create "$vol_name" &>/dev/null && printf "%s" "$vol_name"
+  fi
+}
+
+delete_docker_volume_if_requested() {
+  grep -Eiq '^true$' <<< "$DELETE_DOCKER_VOLUME" && (docker volume rm "${1}-volume" || true)
+}
+
 ENV_FILE="${ENV_FILE:-$(dirname $0)/.env}"
 if env_file_present
 then
@@ -140,6 +154,7 @@ start_vpn() {
   create_openvpn_down_scripts
 
   build_docker_image || return 1
+  vol_name=$(build_docker_volume "$VPN_CONTAINER_NAME") || return 1
   if test -z "$cert_path" || test -z "$key_path"
   then
     docker run --detach \
@@ -150,6 +165,7 @@ start_vpn() {
       -v "$(openvpn_login_file):/login_info" \
       -v "$(openvpn_up_file):/additional_up_scripts.sh" \
       -v "$(openvpn_down_file):/additional_down_scripts.sh" \
+      -v "${vol_name}:/mnt/extras" \
       --privileged \
       --publish $HTTP_PROXY_PORT:8118 \
       --publish $SOCKS_PROXY_PORT:8889 \
@@ -165,6 +181,7 @@ start_vpn() {
       -v "$(openvpn_login_file):/login_info" \
       -v "$(openvpn_up_file):/additional_up_scripts.sh" \
       -v "$(openvpn_down_file):/additional_down_scripts.sh" \
+      -v "${vol_name}:/mnt/extras" \
       --privileged \
       --publish $HTTP_PROXY_PORT:8118 \
       --publish $SOCKS_PROXY_PORT:8889 \
@@ -182,4 +199,5 @@ stop_vpn() {
   docker rm -f "$VPN_CONTAINER_NAME" 
   delete_openvpn_login_and_config_file_if_present
   delete_openvpn_scripts
+  delete_docker_volume_if_requested "$VPN_CONTAINER_NAME"
 }

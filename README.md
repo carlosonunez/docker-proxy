@@ -112,6 +112,10 @@ If so, choose the VPN server corresponding to the gateway that you would like to
 For more info on why you need to do this,
 [visit this GitHub issue](https://github.com/dlenski/openconnect/issues/128).
 
+> ✅ If you need to run command-line applications that do not support SOCKS5 or
+> HTTP proxies, use `docker cp` to copy them into `/mnt/extras`, then run the
+> command with `docker exec`.
+
 ## Cool Use Cases
 
 ### Dedicated browser for separating normal web browsing from "protected" web browsing
