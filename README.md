@@ -94,6 +94,10 @@ To stop the VPN, simply run: `./stop_vpn.sh`.
 **NOTE**: If your `.env` file is not in your current working directory, use this instead:
 `ENV_FILE=/path/to/env ./stop_vpn.sh`
 
+## Need to change the path to the Docker UNIX socket?
+
+Prefix `./{start,stop}_vpn.sh` with `VPN_DOCKER_SOCK=[PATH]`.
+
 ## Does your VPN require a client certificate?
 
 If so and you are using openconnect, add this to your `ENV_FILE`:

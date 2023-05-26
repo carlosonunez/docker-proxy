@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 CREATE_DOCKER_VOLUME="${CREATE_DOCKER_VOLUME:-true}"
 DELETE_DOCKER_VOLUME="${DELETE_DOCKER_VOLUME:-false}"
+if test -n "$VPN_DOCKER_SOCK"
+then
+  export DOCKER_HOST="unix://$VPN_DOCKER_SOCK"
+fi
 _create_scripts() {
   script_file="$1"
   vpn_scripts_csv="$2"
