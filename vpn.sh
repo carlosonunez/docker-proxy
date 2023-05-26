@@ -104,7 +104,6 @@ VPN_DOCKER_IMAGE_NAME="${VPN_DOCKER_IMAGE_NAME:-local/docker_vpn}"
 REBUILD_IMAGE="${REBUILD_IMAGE:-false}"
 HTTP_PROXY_PORT="${HTTP_PROXY_PORT:-8118}"
 SOCKS_PROXY_PORT="${SOCKS_PROXY_PORT:-8889}"
-PLATFORM="${PLATFORM:-amd64}"
 
 resolve_docker_platform_or_fail() {
   _resolve_using_cpu_arch() {
@@ -124,14 +123,16 @@ resolve_docker_platform_or_fail() {
     esac
   }
 
-  _resolve_using_preference() {
+  _resolve_using_environment_variable() {
     grep -iq 'amd64' <<< "$PLATFORM" && { echo "linux/amd64" && return 0; }
     grep -iq 'arm' <<< "$PLATFORM" && { echo "linux/arm64" && return 0; }
     >&2 echo "ERROR: Unsupported platform: $PLATFORM" && exit 1
   }
 
-  test -z "$PLATFORM" && _resolve_using_cpu_arch || _resolve_using_preference
-
+  if test -z "$PLATFORM"
+  then _resolve_using_cpu_arch
+  else _resolve_using_environment_variable
+  fi
 }
 
 build_docker_image() {
