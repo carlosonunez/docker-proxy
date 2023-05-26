@@ -1,5 +1,5 @@
 # polipo seems to have been removed or not ported into Focal
-FROM ubuntu:latest AS base
+FROM ubuntu:jammy AS base
 MAINTAINER Carlos Nunez <dev@carlosnunez.me>
 
 RUN apt -y update
