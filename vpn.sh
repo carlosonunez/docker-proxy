@@ -172,8 +172,7 @@ start_vpn() {
       -v "$(openvpn_down_file):/additional_down_scripts.sh" \
       -v "${vol_name}:/mnt/extras" \
       --privileged \
-      --publish $HTTP_PROXY_PORT:8118 \
-      --publish $SOCKS_PROXY_PORT:8889 \
+      --net=host \
       $VPN_DOCKER_IMAGE_NAME >/dev/null
   else
     docker run --detach \
@@ -188,8 +187,7 @@ start_vpn() {
       -v "$(openvpn_down_file):/additional_down_scripts.sh" \
       -v "${vol_name}:/mnt/extras" \
       --privileged \
-      --publish $HTTP_PROXY_PORT:8118 \
-      --publish $SOCKS_PROXY_PORT:8889 \
+      --net=host \
       $VPN_DOCKER_IMAGE_NAME >/dev/null
   fi
 }
