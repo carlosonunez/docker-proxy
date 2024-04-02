@@ -94,6 +94,16 @@ delete_docker_volume_if_requested() {
   grep -Eiq '^true$' <<< "$DELETE_DOCKER_VOLUME" && (docker volume rm "${1}-volume" || true)
 }
 
+connect_to_vnc_server_if_oidc_login_required() {
+  if grep -Eq '^GP_ENABLE_OIDC_LOGIN=' "$ENV_FILE"
+  then
+    >&2 echo "Attempting to connect to the container's built in VNC server in 3 seconds. \
+(Connect to localhost:59000 if this does not work)"
+    sleep 3
+    open "vnc://localhost:59000"
+  fi
+}
+
 ENV_FILE="${ENV_FILE:-$(dirname $0)/.env}"
 if env_file_present
 then
@@ -160,6 +170,7 @@ start_vpn() {
 
   build_docker_image || return 1
   vol_name=$(build_docker_volume "$VPN_CONTAINER_NAME") || return 1
+  cookie_vol=$(build_docker_volume "${VPN_CONTAINER_NAME}-cookies") || return 1
   if test -z "$cert_path" || test -z "$key_path"
   then
     docker run --detach \
@@ -171,9 +182,11 @@ start_vpn() {
       -v "$(openvpn_up_file):/additional_up_scripts.sh" \
       -v "$(openvpn_down_file):/additional_down_scripts.sh" \
       -v "${vol_name}:/mnt/extras" \
+      -v "${cookie_vol}:/cookies" \
       --privileged \
       --net=host \
       $VPN_DOCKER_IMAGE_NAME >/dev/null
+    connect_to_vnc_server_if_oidc_login_required
   else
     docker run --detach \
       --name "$VPN_CONTAINER_NAME" \
@@ -186,9 +199,11 @@ start_vpn() {
       -v "$(openvpn_up_file):/additional_up_scripts.sh" \
       -v "$(openvpn_down_file):/additional_down_scripts.sh" \
       -v "${vol_name}:/mnt/extras" \
+      -v "${cookie_vol}:/cookies" \
       --privileged \
       --net=host \
       $VPN_DOCKER_IMAGE_NAME >/dev/null
+    connect_to_vnc_server_if_oidc_login_required
   fi
 }
 

@@ -76,7 +76,8 @@ down /additional_down_scripts
 If your OpenVPN server advertises a nameserver, add this to your config:
 
 ```
-up /etc/openvpn/update-resolv-conf.sh
+up /etc/openvpn/update-systemd-resolv.sh
+up /etc/openvpn/update-systemd-network.sh
 ```
 
 An update to date example is provided at `.env.example`. _Don't use quotes around the values!_
@@ -119,6 +120,41 @@ For more info on why you need to do this,
 > ✅ If you need to run command-line applications that do not support SOCKS5 or
 > HTTP proxies, use `docker cp` to copy them into `/mnt/extras`, then run the
 > command with `docker exec`.
+
+## Does your GlobalProtect VPN require Single Sign On authentication?
+
+Some GlobalProtect VPNs require you to log in via a web browser to finish
+authenticating.
+
+If that's the case for your VPN, do the following:
+
+1. Download a VNC client, like TigerVNC or RealVNC.
+2. Add the following to your `.env` file:
+
+   ```sh
+   GP_ENABLE_OIDC_LOGIN=true
+   VNC_PASSWORD=enter-password-here
+   ```
+
+   If your VPN gateway is using an untrusted root CA, add this as well:
+
+   ```sh
+   GP_ENABLE_INSECURE_OIDC_LOGIN=true
+   ```
+
+3. Afterwards, run `start_vpn.sh` like normal. When it finishes, open your VNC
+   client and connect to `localhost:59000`.
+
+   You should be greeted with a small browser window that you can use to
+   complete the authentication process. The VPN connection should be established
+   once this completes.
+
+> ⚠️  If you have `$OPENCONNECT_OPTIONS` defined in your `.env`, do not configure
+> the following flags:
+>
+> - `--username, -u`
+> - `--portal`
+> - `--gateway`
 
 ## Cool Use Cases
 
@@ -192,3 +228,9 @@ PLATFORM=amd64 ./start_vpn.sh
 ```
 
 Remove any `docker_vpn` images before doing this.
+
+### I get this weird `512 Custom Error` after logging in.
+
+Check your username and password. If you're connecting to a GlobalProtect
+VPN that is SSO enabled, make sure that you don't have the arguments
+outlined in the warning above in your `$OPENCONNECT_OPTIONS`.
