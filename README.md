@@ -76,7 +76,7 @@ down /additional_down_scripts
 If your OpenVPN server advertises a nameserver, add this to your config:
 
 ```
-up /etc/openvpn/update-systemd-resolv.sh
+up /etc/openvpn/update-systemd-resolve.sh
 up /etc/openvpn/update-systemd-network.sh
 ```
 

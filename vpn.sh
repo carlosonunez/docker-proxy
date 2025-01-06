@@ -91,7 +91,8 @@ build_docker_volume() {
 }
 
 delete_docker_volume_if_requested() {
-  grep -Eiq '^true$' <<< "$DELETE_DOCKER_VOLUME" && (docker volume rm "${1}-volume" || true)
+  grep -Eiq '^true$' <<< "$DELETE_DOCKER_VOLUME" || return 0
+  docker volume rm "${1}-volume" || true
 }
 
 connect_to_vnc_server_if_oidc_login_required() {
@@ -214,7 +215,7 @@ stop_vpn() {
     exit 1
   fi
 
-  docker rm -f "$VPN_CONTAINER_NAME" 
+  docker rm -f "$VPN_CONTAINER_NAME"  || true
   delete_openvpn_login_and_config_file_if_present
   delete_openvpn_scripts
   delete_docker_volume_if_requested "$VPN_CONTAINER_NAME"
